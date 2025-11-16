@@ -113,9 +113,8 @@ export default function ProductPage() {
                   <button
                     key={img.id}
                     onClick={() => setSelectedImage(idx)}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${
-                      selectedImage === idx ? "border-blue-500" : "border-white/10"
-                    }`}
+                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${selectedImage === idx ? "border-blue-500" : "border-white/10"
+                      }`}
                   >
                     <Image
                       src={img.src}
@@ -164,7 +163,7 @@ export default function ProductPage() {
               </div>
 
               {/* Social Share */}
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center gap-3 ">
                 <span className="text-white/60 text-sm">CONTACT US</span>
                 <Share2 className="w-4 h-4 text-white/60" />
                 <div className="flex items-center gap-2">
@@ -210,7 +209,7 @@ export default function ProductPage() {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-white text-2xl font-semibold mb-6">You May Also Like</h2>
+            <h2 className="text-white text-2xl font-semibold ">You May Also Like</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {relatedProducts.map((relatedProduct) => (
                 <ProductCard

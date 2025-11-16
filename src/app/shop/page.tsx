@@ -73,13 +73,13 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1724]">
+    <div className="min-h-screen bg-background">
       <Header />
 
       <main className="container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Discover Fonts That Define Your Style
           </h1>
         </div>
@@ -88,13 +88,13 @@ export default function ShopPage() {
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
           <form onSubmit={handleSearch} className="flex-1 max-w-md">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search font here..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-[#1a2b4d] border-white/10 text-white placeholder:text-white/50"
+                className="pl-10 bg-card border-border text-foreground placeholder:text-muted-foreground"
               />
             </div>
           </form>
@@ -111,8 +111,8 @@ export default function ShopPage() {
                 }}
                 className={
                   selectedCategory === cat.id
-                    ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "border-white/20 text-white hover:bg-white/10"
+                    ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                    : "border-border text-foreground hover:bg-muted"
                 }
               >
                 {cat.label}
@@ -127,7 +127,7 @@ export default function ShopPage() {
             {Array.from({ length: 12 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-[#1a2b4d]/50 rounded-lg h-80 animate-pulse"
+                className="bg-muted/50 rounded-lg h-80 animate-pulse"
               />
             ))}
           </div>
@@ -143,7 +143,7 @@ export default function ShopPage() {
           </div>
         ) : (
           <div className="text-center py-20">
-            <p className="text-white/60 text-lg">No products found</p>
+            <p className="text-muted-foreground text-lg">No products found</p>
           </div>
         )}
 
@@ -155,7 +155,7 @@ export default function ShopPage() {
               size="icon"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-border text-foreground hover:bg-muted"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
@@ -180,8 +180,8 @@ export default function ShopPage() {
                   onClick={() => setCurrentPage(pageNum)}
                   className={
                     currentPage === pageNum
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "border-white/20 text-white hover:bg-white/10"
+                      ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                      : "border-border text-foreground hover:bg-muted"
                   }
                 >
                   {pageNum}
@@ -191,7 +191,7 @@ export default function ShopPage() {
 
             {totalPages > 5 && (
               <>
-                <span className="text-white/50">...</span>
+                <span className="text-muted-foreground">...</span>
                 <Button
                   variant="outline"
                   size="sm"
@@ -208,7 +208,7 @@ export default function ShopPage() {
               size="icon"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-border text-foreground hover:bg-muted"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>

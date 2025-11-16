@@ -80,12 +80,12 @@ function PaymentReturnContent() {
                   <CheckCircle className="w-10 h-10 text-green-500" />
                 </div>
                 <h1 className="text-white text-2xl font-bold mb-2">Payment Successful!</h1>
-                <p className="text-white/60 mb-6">
+                <p className="text-white/60 ">
                   Thank you for your purchase. Your payment has been processed successfully.
                 </p>
 
                 {orderId && (
-                  <div className="bg-[#0f1724] rounded-lg p-4 mb-6">
+                  <div className="bg-[#0f1724] rounded-lg p-4 ">
                     <p className="text-white/80 text-sm mb-1">Order Number</p>
                     <p className="text-white font-semibold text-lg">#{orderId}</p>
                   </div>
@@ -133,7 +133,7 @@ function PaymentReturnContent() {
                 <XCircle className="w-10 h-10 text-red-500" />
               </div>
               <h1 className="text-white text-2xl font-bold mb-2">Payment Failed</h1>
-              <p className="text-white/60 mb-6">
+              <p className="text-white/60 ">
                 Unfortunately, we couldn't process your payment. Please try again or contact support if the problem persists.
               </p>
 

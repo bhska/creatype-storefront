@@ -8,39 +8,70 @@ import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ArrowRight, Lightbulb, DollarSign, Layers, FileCheck } from "lucide-react";
+import { useState, useEffect } from "react";
+import { apiClient } from "@/lib/api-client";
+import type { WCProduct } from "@/lib/woocommerce";
+import { ProductCard } from "@/components/ProductCard";
+import { useCart } from "@/lib/cart-context";
+import { toast } from "sonner";
 
 export default function Home() {
-  const latestFonts = [
-    { name: "Elanor Retro Display", category: "DISPLAY", price: "$25", image: "https://ext.same-assets.com/1839301121/2981467988.png" },
-    { name: "Ravioli Whimsical", category: "DISPLAY", price: "$25", image: "https://ext.same-assets.com/1839301121/1908426588.png" },
-    { name: "Rockville Versatility Serif", category: "SERIF", price: "$25", image: "https://ext.same-assets.com/1839301121/550509967.png" },
-    { name: "Kithara Sophisticated", category: "SERIF", price: "$25", image: "https://ext.same-assets.com/1839301121/1998126962.png" },
-    { name: "Astragon Modern", category: "SERIF", price: "$25", image: "https://ext.same-assets.com/1839301121/1833752454.png" },
-    { name: "Marline Beautiful Sans", category: "SERIF", price: "$25", image: "https://ext.same-assets.com/1839301121/2500002024.png" },
-    { name: "Baginks Birkin Serif", category: "SERIF", price: "$25", image: "https://ext.same-assets.com/1839301121/2577966116.png" },
-    { name: "Bentley Monoline", category: "SANS", price: "$25", image: "https://ext.same-assets.com/1839301121/1951798213.png" },
-  ];
+  const [latestFonts, setLatestFonts] = useState<WCProduct[]>([]);
+  const [bestSellers, setBestSellers] = useState<WCProduct[]>([]);
+  const [featuredFonts, setFeaturedFonts] = useState<WCProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { addItem } = useCart();
 
-  const bestSellers = [
-    { name: "Brittany Signature Script", category: "SCRIPT", price: "$29", image: "https://ext.same-assets.com/1839301121/1103957144.jpeg" },
-    { name: "Gistesy Signature", category: "SCRIPT", price: "$25", image: "https://ext.same-assets.com/1839301121/3774480499.png" },
-    { name: "Halimun Script Style", category: "SCRIPT", price: "$25", image: "https://ext.same-assets.com/1839301121/1342859359.png" },
-    { name: "Barcelony Signature", category: "SCRIPT", price: "$19", image: "https://ext.same-assets.com/1839301121/1850557146.jpeg" },
-    { name: "White Angelica", category: "SCRIPT", price: "$19", image: "https://ext.same-assets.com/1839301121/883772303.jpeg" },
-    { name: "Mistrully Brush Script", category: "BRUSH", price: "$25", image: "https://ext.same-assets.com/1839301121/2952094463.jpeg" },
-  ];
+  useEffect(() => {
+    fetchHomeProducts();
+  }, []);
 
-  const featuredFonts = [
-    { name: "Nightmare Bloody Thriller", category: "DISPLAY", price: "$25", image: "https://ext.same-assets.com/1839301121/3364897408.jpeg" },
-    { name: "Gaston & Jacklyn Stylish", category: "SCRIPT", price: "$25", image: "https://ext.same-assets.com/1839301121/3135795265.jpeg" },
-    { name: "Wastogi Beautiful Serif", category: "SERIF", price: "$25", image: "https://ext.same-assets.com/1839301121/3575210611.png" },
-    { name: "Nawacitha Display Curly", category: "SCRIPT", price: "$25", image: "https://ext.same-assets.com/1839301121/3324040850.png" },
-    { name: "Mossley Signature", category: "SCRIPT", price: "$19", image: "https://ext.same-assets.com/1839301121/1508587185.jpeg" },
-    { name: "Forester Hand Brush", category: "DISPLAY", price: "$25", image: "https://ext.same-assets.com/1839301121/724417629.jpeg" },
-    { name: "Estelly Stylish Signature", category: "SCRIPT", price: "$19", image: "https://ext.same-assets.com/1839301121/1973268643.jpeg" },
-    { name: "Bentley Monoline Vintage", category: "SANS", price: "$25", image: "https://ext.same-assets.com/1839301121/1951798213.png" },
-    { name: "Jabawoky Stylish", category: "DISPLAY", price: "$19", image: "https://ext.same-assets.com/1839301121/1521969843.jpeg" },
-  ];
+  async function fetchHomeProducts() {
+    setLoading(true);
+    try {
+      // Fetch latest products
+      const latestResult = await apiClient.getProducts({
+        per_page: 8,
+        orderby: 'date',
+        order: 'desc'
+      });
+      setLatestFonts(latestResult.products);
+
+      // Fetch best sellers (featured products)
+      const bestSellersResult = await apiClient.getProducts({
+        per_page: 6,
+        featured: true,
+        orderby: 'date',
+        order: 'desc'
+      });
+      setBestSellers(bestSellersResult.products);
+
+      // Fetch featured fonts (more products)
+      const featuredResult = await apiClient.getProducts({
+        per_page: 9,
+        orderby: 'popularity',
+        order: 'desc'
+      });
+      setFeaturedFonts(featuredResult.products);
+    } catch (error) {
+      console.error("Error fetching home products:", error);
+      toast.error("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleAddToCart = (product: WCProduct) => {
+    addItem({
+      product_id: product.id,
+      name: product.name,
+      price: parseFloat(product.price),
+      image: product.images[0]?.src || "/placeholder.png",
+      license: "Standard License",
+      quantity: 1
+    });
+    toast.success(`${product.name} added to cart`);
+  };
 
   const brandLogos = [
     "https://ext.same-assets.com/1839301121/1602260894.webp",
@@ -88,14 +119,13 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0f1724]">
+    <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero Section */}
       <section className="relative bg-linear-to-b from-[#1a2b4d] to-[#0f1724] py-24 overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
-            <h1 className="text-6xl md:text-7xl font-light text-white mb-8 leading-tight">
+            <h1 className="text-6xl md:text-7xl font-light text-foreground mb-8 leading-tight">
               Good Font is<br />A Good Brand
             </h1>
           </div>
@@ -112,7 +142,7 @@ export default function Home() {
               <Card className="bg-cyan-400 border-0 overflow-hidden h-80 relative">
                 <img src="https://ext.same-assets.com/1839301121/1681791624.webp" alt="POND'S" className="w-full h-full object-cover" />
                 <div className="absolute top-4 left-4">
-                  <h3 className="text-xl font-light text-white mb-1">Jelytta Font Gives</h3>
+                  <h3 className="text-xl font-light text-foreground mb-1">Jelytta Font Gives</h3>
                   <p className="text-2xl font-medium text-gray-900">POND'S x Maudy<br />Ayunda a Signature Look</p>
                 </div>
               </Card>
@@ -125,43 +155,40 @@ export default function Home() {
       </section>
 
       {/* Search Section */}
-      <section className="py-20 bg-[#1a2b4d]">
+      <section className="py-20 bg-card">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-light text-white mb-4">Discover Your Perfect<br />Font Match</h2>
-          <p className="text-white/70 max-w-xl mx-auto">
+          <h2 className="text-4xl font-light text-foreground mb-4">Discover Your Perfect<br />Font Match</h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
             Search our curated collection of premium fonts to enhance your design projects effortlessly.
           </p>
         </div>
       </section>
 
       {/* Latest Fonts */}
-      <section className="py-20 bg-[#0f1724]">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center mb-12">
-            <h2 className="text-3xl font-light text-white border-b border-white/20 pb-2 inline-block">Latest Fonts</h2>
+            <h2 className="text-3xl font-light text-foreground border-b border-white/20 pb-2 inline-block">Latest Fonts</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {latestFonts.map((font, idx) => (
-              <Link key={idx} href={`/product/${font.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                <Card className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                  <div className="aspect-4/3 overflow-hidden bg-white/5">
-                    <Image src={font.image} alt={font.name} width={400} height={300} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-white font-medium mb-2 truncate">{font.name}</h3>
-                    <Badge className="mb-4 bg-primary text-white hover:bg-primary/90">{font.category}</Badge>
-                    <Button className="w-full bg-transparent border border-white/20 text-white hover:bg-white/10">
-                      BUY NOW {font.price}
-                    </Button>
-                  </div>
-                </Card>
-              </Link>
-            ))}
+            {loading ? (
+              <div className="col-span-full flex justify-center items-center min-h-[400px]">
+                <div className="text-foreground">Loading products...</div>
+              </div>
+            ) : (
+              latestFonts.map((product) => (
+                <ProductCard 
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                />
+              ))
+            )}
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-primary hover:bg-primary/90 text-white">
+            <Button className="bg-primary hover:bg-primary/90 text-foreground">
               FIND MORE <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>
@@ -169,33 +196,30 @@ export default function Home() {
       </section>
 
       {/* Best Seller */}
-      <section className="py-20 bg-[#0f1724]">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center mb-12">
-            <h2 className="text-3xl font-light text-white border-b border-white/20 pb-2 inline-block">Best Seller</h2>
+            <h2 className="text-3xl font-light text-foreground border-b border-white/20 pb-2 inline-block">Best Seller</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {bestSellers.map((font, idx) => (
-              <Link key={idx} href={`/product/${font.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                <Card className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                  <div className="aspect-4/3 overflow-hidden bg-white/5">
-                    <Image src={font.image} alt={font.name} width={400} height={300} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-white font-medium mb-2 truncate">{font.name}</h3>
-                  <Badge className="mb-4 bg-primary text-white hover:bg-primary/90">{font.category}</Badge>
-                    <Button className="w-full bg-transparent border border-white/20 text-white hover:bg-white/10">
-                      BUY NOW {font.price}
-                    </Button>
-                  </div>
-                </Card>
-              </Link>
-            ))}
+            {loading ? (
+              <div className="col-span-full flex justify-center items-center min-h-[400px]">
+                <div className="text-foreground">Loading products...</div>
+              </div>
+            ) : (
+              bestSellers.map((product) => (
+                <ProductCard 
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                />
+              ))
+            )}
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-primary hover:bg-primary/90 text-white">
+            <Button className="bg-primary hover:bg-primary/90 text-foreground">
               FIND MORE <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>
@@ -203,33 +227,30 @@ export default function Home() {
       </section>
 
       {/* Featured Fonts */}
-      <section className="py-20 bg-[#0f1724]">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center mb-12">
-            <h2 className="text-3xl font-light text-white border-b border-white/20 pb-2 inline-block">Featured Fonts</h2>
+            <h2 className="text-3xl font-light text-foreground border-b border-white/20 pb-2 inline-block">Featured Fonts</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {featuredFonts.map((font, idx) => (
-              <Link key={idx} href={`/product/${font.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                <Card className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                  <div className="aspect-4/3 overflow-hidden bg-white/5">
-                    <Image src={font.image} alt={font.name} width={400} height={300} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-white font-medium mb-2 truncate">{font.name}</h3>
-                  <Badge className="mb-4 bg-primary text-white hover:bg-primary/90">{font.category}</Badge>
-                  <Button className="w-full bg-transparent border border-white/20 text-white hover:bg-white/10">
-                    BUY NOW {font.price}
-                  </Button>
-                </div>
-              </Card>
-            </Link>
-            ))}
+            {loading ? (
+              <div className="col-span-full flex justify-center items-center min-h-[400px]">
+                <div className="text-foreground">Loading products...</div>
+              </div>
+            ) : (
+              featuredFonts.map((product) => (
+                <ProductCard 
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                />
+              ))
+            )}
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-primary hover:bg-primary/90 text-white">
+            <Button className="bg-primary hover:bg-primary/90 text-foreground">
               FIND MORE <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>
@@ -237,12 +258,12 @@ export default function Home() {
       </section>
 
       {/* Trusted By */}
-      <section className="py-20 bg-[#1a2b4d]">
+      <section className="py-20 bg-card">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-light text-white mb-12">Trusted by Creative at</h2>
+          <h2 className="text-3xl font-light text-foreground mb-12">Trusted by Creative at</h2>
           <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-8 gap-4 items-center opacity-60">
             {brandLogos.map((logo, idx) => (
-              <div key={idx} className="bg-[#0f1724] p-4 rounded flex items-center justify-center h-20">
+              <div key={idx} className="bg-background p-4 rounded flex items-center justify-center h-20">
                 <img src={logo} alt={`Brand ${idx + 1}`} className="max-w-full max-h-full object-contain" />
               </div>
             ))}
@@ -251,11 +272,11 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-20 bg-[#1a2b4d]">
+      <section className="py-20 bg-card">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-light text-white mb-4">Why Choose Us</h2>
-            <p className="text-white/70 max-w-xl mx-auto">
+            <h2 className="text-4xl font-light text-foreground mb-4">Why Choose Us</h2>
+            <p className="text-foreground/70 max-w-xl mx-auto">
               Search our curated collection of premium fonts to enhance your design projects effortlessly.
             </p>
           </div>
@@ -263,34 +284,34 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary rounded mx-auto mb-4 flex items-center justify-center">
-                <Lightbulb className="w-8 h-8 text-white" />
+                <Lightbulb className="w-8 h-8 text-foreground" />
               </div>
-              <h3 className="text-xl text-white mb-2">Innovative design solutions</h3>
-              <p className="text-white/60 text-sm">We create unique and tailored design solutions that elevate your brand.</p>
+              <h3 className="text-xl text-foreground mb-2">Innovative design solutions</h3>
+              <p className="text-foreground/60 text-sm">We create unique and tailored design solutions that elevate your brand.</p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-primary rounded mx-auto mb-4 flex items-center justify-center">
-                <DollarSign className="w-8 h-8 text-white" />
+                <DollarSign className="w-8 h-8 text-foreground" />
               </div>
-              <h3 className="text-xl text-white mb-2">Competitive pricing</h3>
-              <p className="text-white/60 text-sm">We offer premium design services at competitive prices.</p>
+              <h3 className="text-xl text-foreground mb-2">Competitive pricing</h3>
+              <p className="text-foreground/60 text-sm">We offer premium design services at competitive prices.</p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-primary rounded mx-auto mb-4 flex items-center justify-center">
-                <Layers className="w-8 h-8 text-white" />
+                <Layers className="w-8 h-8 text-foreground" />
               </div>
-              <h3 className="text-xl text-white mb-2">Many style available</h3>
-              <p className="text-white/60 text-sm">Explore our collection of fonts, featuring a wide range of style to meet ur design.</p>
+              <h3 className="text-xl text-foreground mb-2">Many style available</h3>
+              <p className="text-foreground/60 text-sm">Explore our collection of fonts, featuring a wide range of style to meet ur design.</p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-primary rounded mx-auto mb-4 flex items-center justify-center">
-                <FileCheck className="w-8 h-8 text-white" />
+                <FileCheck className="w-8 h-8 text-foreground" />
               </div>
-              <h3 className="text-xl text-white mb-2">All license you need</h3>
-              <p className="text-white/60 text-sm">We offer all the licenses you need to use our products confidently.</p>
+              <h3 className="text-xl text-foreground mb-2">All license you need</h3>
+              <p className="text-foreground/60 text-sm">We offer all the licenses you need to use our products confidently.</p>
             </div>
           </div>
         </div>
@@ -300,8 +321,8 @@ export default function Home() {
       <section className="py-20 bg-primary">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl">
-            <h2 className="text-5xl font-light text-white mb-6">How About a<br />Custom<br />License?</h2>
-            <p className="text-white/90 mb-8 max-w-md">
+            <h2 className="text-5xl font-light text-foreground ">How About a<br />Custom<br />License?</h2>
+            <p className="text-foreground/90 mb-8 max-w-md">
               We offer a custom licenses for clients who are looking for a tailored solution. We work directly for brands and advertising agencies
             </p>
             <Button className="bg-white text-primary hover:bg-white/90 px-8">
@@ -312,9 +333,9 @@ export default function Home() {
       </section>
 
       {/* Font In Use */}
-      <section className="py-20 bg-[#1a2b4d]">
+      <section className="py-20 bg-card">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-light text-white mb-12">Font In Use</h2>
+          <h2 className="text-3xl font-light text-foreground mb-12">Font In Use</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div className="aspect-square overflow-hidden rounded">
               <img src="https://ext.same-assets.com/1839301121/1345470891.webp" alt="Font in use 1" className="w-full h-full object-cover" />
@@ -330,11 +351,11 @@ export default function Home() {
       </section>
 
       {/* Blog Section */}
-      <section className="py-20 bg-[#1a2b4d]">
+      <section className="py-20 bg-card">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-light text-white mb-4">What's New Today!</h2>
-            <p className="text-white/70">Stay inspired with expert tips, design trends, and creative ideas</p>
+            <h2 className="text-4xl font-light text-foreground mb-4">What's New Today!</h2>
+            <p className="text-foreground/70">Stay inspired with expert tips, design trends, and creative ideas</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
@@ -344,10 +365,10 @@ export default function Home() {
                   <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-4">
-                  <Badge className="mb-3 bg-primary text-white text-xs">{post.date}</Badge>
-                  <h3 className="text-white font-medium mb-2 line-clamp-2 text-sm">{post.title}</h3>
-                  <p className="text-white/60 text-xs mb-4 line-clamp-2">{post.excerpt}</p>
-                  <Button variant="link" className="text-white p-0 h-auto">
+                  <Badge className="mb-3 bg-primary text-foreground text-xs">{post.date}</Badge>
+                  <h3 className="text-foreground font-medium mb-2 line-clamp-2 text-sm">{post.title}</h3>
+                  <p className="text-foreground/60 text-xs mb-4 line-clamp-2">{post.excerpt}</p>
+                  <Button variant="link" className="text-foreground p-0 h-auto">
                     READ MORE <ArrowRight className="ml-1 w-3 h-3" />
                   </Button>
                 </div>
@@ -356,7 +377,7 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-primary hover:bg-primary/90 text-white">
+            <Button className="bg-primary hover:bg-primary/90 text-foreground">
               SEE MORE BLOG <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>

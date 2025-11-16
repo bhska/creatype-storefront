@@ -57,13 +57,13 @@ export function PricingSidebar({ basePrice, productName, onAddToCart }: PricingS
 
   return (
     <Card className="bg-[#1a2b4d] border-white/10 p-6 sticky top-24">
-      <div className="mb-6">
+      <div className="">
         <Badge className="bg-blue-600 text-white mb-2">30% OFF until November Extended of 2 weeks</Badge>
         <h3 className="text-white font-semibold text-lg mb-1">{productName}</h3>
         <p className="text-white/60 text-sm">Digital Download</p>
       </div>
 
-      <div className="space-y-3 mb-6">
+      <div className="space-y-3 ">
         {licenses.map((license) => (
           <div
             key={license.id}
@@ -91,7 +91,7 @@ export function PricingSidebar({ basePrice, productName, onAddToCart }: PricingS
         ))}
       </div>
 
-      <div className="border-t border-white/10 pt-4 mb-6">
+      <div className="border-t border-white/10 pt-4 ">
         <div className="flex items-center justify-between mb-1">
           <span className="text-white text-sm">Total</span>
           <span className="text-white text-2xl font-bold">${totalPrice}</span>

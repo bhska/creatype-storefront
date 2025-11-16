@@ -15,9 +15,9 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const image = product.images[0]?.src || "/placeholder.png";
 
   return (
-    <div className="group relative bg-[#1a2b4d]/50 rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-300">
+    <div className="group relative bg-card rounded-lg overflow-hidden border border-border hover:border-primary transition-all duration-300">
       <Link href={`/product/${product.slug}`}>
-        <div className="aspect-[4/3] relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+        <div className="aspect-[4/3] relative overflow-hidden bg-muted">
           <Image
             src={image}
             alt={product.name}
@@ -30,11 +30,11 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
           <Link href={`/product/${product.slug}`}>
-            <h3 className="font-semibold text-white text-sm group-hover:text-blue-400 transition-colors line-clamp-2">
+            <h3 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors line-clamp-2">
               {product.name}
             </h3>
           </Link>
-          <Badge className="bg-blue-600 hover:bg-blue-700 text-white text-xs ml-2 shrink-0">
+          <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs ml-2 shrink-0">
             {category}
           </Badge>
         </div>
@@ -43,7 +43,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-8"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs h-8"
               onClick={(e) => {
                 e.preventDefault();
                 onAddToCart?.(product);
@@ -55,7 +55,7 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           <Button
             size="icon"
             variant="ghost"
-            className="text-white/70 hover:text-white h-8 w-8"
+            className="text-muted-foreground hover:text-foreground h-8 w-8"
             onClick={(e) => {
               e.preventDefault();
               onAddToCart?.(product);

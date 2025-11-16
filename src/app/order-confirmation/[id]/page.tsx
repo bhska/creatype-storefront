@@ -122,7 +122,7 @@ export default function OrderConfirmationPage() {
           </div>
 
           {/* Order Details Card */}
-          <Card className="bg-[#1a2b4d] border-white/10 p-8 mb-6">
+          <Card className="bg-[#1a2b4d] border-white/10 p-8 ">
             <div className="grid grid-cols-2 gap-6 mb-8 pb-8 border-b border-white/10">
               <div>
                 <h3 className="text-white/60 text-sm mb-1">Order Number</h3>
@@ -183,7 +183,7 @@ export default function OrderConfirmationPage() {
           </Card>
 
           {/* Download Notice */}
-          <Card className="bg-blue-900/20 border-blue-500/30 p-6 mb-6">
+          <Card className="bg-blue-900/20 border-blue-500/30 p-6 ">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Download className="w-5 h-5 text-blue-400" />
@@ -218,7 +218,7 @@ export default function OrderConfirmationPage() {
           </div>
 
           {/* Support Notice */}
-          <div className="mt-8 text-center">
+          <div className=" text-center">
             <p className="text-white/60 text-sm">
               Need help? Contact our support team at{" "}
               <a href="mailto:support@creatype.com" className="text-blue-400 hover:underline">
