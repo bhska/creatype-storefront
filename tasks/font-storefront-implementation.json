@@ -1,0 +1,157 @@
+{
+  "task_name": "Font Storefront UI with WooCommerce Integration",
+  "task_id": "font-storefront-woocommerce-2025-11-16",
+  "description": "Implement complete font marketplace UI based on screenshots with WooCommerce API integration",
+  "execution_mode": "sequential_with_parallel",
+  
+  "phases": [
+    {
+      "phase_id": "phase-1-setup",
+      "name": "Environment & WooCommerce Setup",
+      "description": "Configure WooCommerce API, install dependencies, and create service layer",
+      "parallel": false,
+      "droids": ["backend-architect"],
+      "context": {
+        "requirements": [
+          "Create .env.local with WooCommerce API credentials",
+          "Install @woocommerce/woocommerce-rest-api package",
+          "Create src/lib/woocommerce.ts service layer",
+          "Implement product fetching, cart operations, and checkout methods"
+        ],
+        "env_template": {
+          "NEXT_PUBLIC_WC_SITE_URL": "https://your-site.com",
+          "WC_CONSUMER_KEY": "ck_xxxxx",
+          "WC_CONSUMER_SECRET": "cs_xxxxx"
+        }
+      },
+      "validation": {
+        "required_files": [
+          ".env.local",
+          "src/lib/woocommerce.ts"
+        ],
+        "package_installed": "@woocommerce/woocommerce-rest-api"
+      }
+    },
+    {
+      "phase_id": "phase-2-core-components",
+      "name": "Core Components Implementation",
+      "description": "Build shop grid and product detail pages in parallel",
+      "parallel": true,
+      "dependencies": ["phase-1-setup"],
+      "droids": ["frontend-developer", "frontend-developer"],
+      "tasks": [
+        {
+          "task_id": "shop-grid",
+          "droid": "frontend-developer",
+          "name": "Shop & Product Grid",
+          "context": {
+            "requirements": [
+              "Create src/app/shop/page.tsx with product grid",
+              "Build src/components/ProductCard.tsx component",
+              "Implement filter buttons (All Font, Serif, Display, Sans Serif, Script)",
+              "Add search functionality",
+              "Create pagination component"
+            ],
+            "design": {
+              "layout": "4-column grid on desktop, responsive",
+              "colors": {
+                "background": "#0f1724",
+                "card_bg": "#1a2b4d",
+                "accent": "#2563eb"
+              },
+              "components": ["ProductCard", "FilterBar", "SearchInput", "Pagination"]
+            }
+          }
+        },
+        {
+          "task_id": "product-detail",
+          "droid": "frontend-developer",
+          "name": "Product Detail Page",
+          "context": {
+            "requirements": [
+              "Create src/app/product/[slug]/page.tsx",
+              "Build hero section with image gallery",
+              "Implement TypeTester component",
+              "Create license pricing sidebar",
+              "Add related products section",
+              "Cart functionality"
+            ],
+            "design": {
+              "layout": "2-column: content on left, sidebar on right",
+              "components": ["ProductHero", "TypeTester", "PricingSidebar", "RelatedProducts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "phase_id": "phase-3-checkout",
+      "name": "Checkout & Cart",
+      "description": "Implement checkout flow with WooCommerce integration",
+      "parallel": false,
+      "dependencies": ["phase-2-core-components"],
+      "droids": ["frontend-developer"],
+      "context": {
+        "requirements": [
+          "Create src/app/checkout/page.tsx",
+          "Build cart table component",
+          "Implement billing form with validation",
+          "Add coupon code functionality",
+          "Integrate payment methods (PayPal, Credit Cards)",
+          "Order summary sidebar with calculations"
+        ],
+        "form_fields": [
+          "firstName", "lastName", "company", "country", "streetAddress",
+          "apartment", "city", "province", "postalCode", "email"
+        ]
+      }
+    },
+    {
+      "phase_id": "phase-4-shared",
+      "name": "Shared Components",
+      "description": "Create reusable header and footer components",
+      "parallel": false,
+      "dependencies": ["phase-1-setup"],
+      "droids": ["frontend-developer"],
+      "context": {
+        "requirements": [
+          "Create src/components/Header.tsx with navigation",
+          "Create src/components/Footer.tsx with links",
+          "Add cart badge with item count",
+          "Social media icons integration",
+          "Payment method logos"
+        ],
+        "navigation": ["Shop", "License", "Service", "Blog", "Contact", "Custom License"]
+      }
+    },
+    {
+      "phase_id": "phase-5-testing",
+      "name": "Integration & Testing",
+      "description": "Test WooCommerce integration and UI functionality",
+      "parallel": false,
+      "dependencies": ["phase-3-checkout", "phase-4-shared"],
+      "droids": ["test-automator"],
+      "context": {
+        "test_scenarios": [
+          "WooCommerce API connection",
+          "Product listing and filtering",
+          "Cart operations (add, update, remove)",
+          "Checkout flow end-to-end",
+          "Responsive design validation"
+        ]
+      }
+    }
+  ],
+  
+  "design_system": {
+    "colors": {
+      "background": "#0f1724",
+      "header": "#1a2b4d",
+      "accent": "#2563eb",
+      "text_primary": "#ffffff",
+      "text_secondary": "rgba(255,255,255,0.9)"
+    },
+    "components_library": "shadcn/ui",
+    "styling": "Tailwind CSS"
+  }
+}

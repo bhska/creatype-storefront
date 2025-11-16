@@ -1,7 +1,13 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, ShoppingCart, User, ArrowRight, Lightbulb, DollarSign, Layers, FileCheck } from "lucide-react";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { ArrowRight, Lightbulb, DollarSign, Layers, FileCheck } from "lucide-react";
 
 export default function Home() {
   const latestFonts = [
@@ -83,31 +89,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#0f1724]">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-[#1a2b4d] sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <div className="text-white font-bold text-xl italic">Creatype Studio</div>
-              <div className="hidden md:flex items-center gap-6">
-                <a href="#" className="text-white/90 hover:text-white text-sm">Shop</a>
-                <a href="#" className="text-white/90 hover:text-white text-sm">License</a>
-                <a href="#" className="text-white/90 hover:text-white text-sm">Service</a>
-                <a href="#" className="text-white/90 hover:text-white text-sm">Blog</a>
-                <a href="#" className="text-white/90 hover:text-white text-sm">Contact</a>
-                <a href="#" className="text-white/90 hover:text-white text-sm flex items-center gap-1">
-                  Custom License <ArrowRight className="w-3 h-3" />
-                </a>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Search className="w-5 h-5 text-white/80 cursor-pointer hover:text-white" />
-              <ShoppingCart className="w-5 h-5 text-white/80 cursor-pointer hover:text-white" />
-              <User className="w-5 h-5 text-white/80 cursor-pointer hover:text-white" />
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Hero Section */}
       <section className="relative bg-linear-to-b from-[#1a2b4d] to-[#0f1724] py-24 overflow-hidden">
@@ -161,18 +143,20 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {latestFonts.map((font, idx) => (
-              <Card key={idx} className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                <div className="aspect-4/3 overflow-hidden bg-white/5">
-                  <img src={font.image} alt={font.name} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-white font-medium mb-2 truncate">{font.name}</h3>
-                  <Badge className="mb-4 bg-primary text-white hover:bg-primary/90">{font.category}</Badge>
-                  <Button className="w-full bg-transparent border border-white/20 text-white hover:bg-white/10">
-                    BUY NOW {font.price}
-                  </Button>
-                </div>
-              </Card>
+              <Link key={idx} href={`/product/${font.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                <Card className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
+                  <div className="aspect-4/3 overflow-hidden bg-white/5">
+                    <Image src={font.image} alt={font.name} width={400} height={300} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-white font-medium mb-2 truncate">{font.name}</h3>
+                    <Badge className="mb-4 bg-primary text-white hover:bg-primary/90">{font.category}</Badge>
+                    <Button className="w-full bg-transparent border border-white/20 text-white hover:bg-white/10">
+                      BUY NOW {font.price}
+                    </Button>
+                  </div>
+                </Card>
+              </Link>
             ))}
           </div>
 
@@ -193,18 +177,20 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {bestSellers.map((font, idx) => (
-              <Card key={idx} className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                <div className="aspect-4/3 overflow-hidden bg-white/5">
-                  <img src={font.image} alt={font.name} className="w-full h-full object-cover" />
+              <Link key={idx} href={`/product/${font.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                <Card className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
+                  <div className="aspect-4/3 overflow-hidden bg-white/5">
+                    <Image src={font.image} alt={font.name} width={400} height={300} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-4">
                   <h3 className="text-white font-medium mb-2 truncate">{font.name}</h3>
                   <Badge className="mb-4 bg-primary text-white hover:bg-primary/90">{font.category}</Badge>
-                  <Button className="w-full bg-transparent border border-white/20 text-white hover:bg-white/10">
-                    BUY NOW {font.price}
-                  </Button>
-                </div>
-              </Card>
+                    <Button className="w-full bg-transparent border border-white/20 text-white hover:bg-white/10">
+                      BUY NOW {font.price}
+                    </Button>
+                  </div>
+                </Card>
+              </Link>
             ))}
           </div>
 
@@ -225,9 +211,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {featuredFonts.map((font, idx) => (
-              <Card key={idx} className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                <div className="aspect-4/3 overflow-hidden bg-white/5">
-                  <img src={font.image} alt={font.name} className="w-full h-full object-cover" />
+              <Link key={idx} href={`/product/${font.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                <Card className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
+                  <div className="aspect-4/3 overflow-hidden bg-white/5">
+                    <Image src={font.image} alt={font.name} width={400} height={300} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-4">
                   <h3 className="text-white font-medium mb-2 truncate">{font.name}</h3>
@@ -237,6 +224,7 @@ export default function Home() {
                   </Button>
                 </div>
               </Card>
+            </Link>
             ))}
           </div>
 
@@ -375,66 +363,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-primary py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="text-white font-bold text-xl italic mb-6">Creatype Studio</div>
-              <div className="flex gap-3">
-                <img src="https://ext.same-assets.com/1839301121/155958500.svg" alt="PayPal" className="h-6" />
-                <img src="https://ext.same-assets.com/1839301121/2369557683.svg" alt="Mastercard" className="h-6" />
-                <img src="https://ext.same-assets.com/1839301121/3332002304.svg" alt="Visa" className="h-6" />
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-white font-semibold mb-4">SHOP FONTS</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Serif</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Sans Serif</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Script</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Brush</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Display</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-white font-semibold mb-4">COMPANY</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">About</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">License</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Blog</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">FAQ</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Contact</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-white font-semibold mb-4">LEGAL</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Privacy Policy</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Terms and Conditions</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Cookie Policy</a></li>
-                <li><a href="#" className="text-white/80 hover:text-white text-sm">Guest Post Guidelines</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-white/20 pt-8">
-            <div className="flex flex-wrap gap-4 justify-center mb-6">
-              <a href="#" className="text-white/80 hover:text-white text-sm flex items-center gap-2">Facebook</a>
-              <a href="#" className="text-white/80 hover:text-white text-sm flex items-center gap-2">Instagram</a>
-              <a href="#" className="text-white/80 hover:text-white text-sm flex items-center gap-2">Behance</a>
-              <a href="#" className="text-white/80 hover:text-white text-sm flex items-center gap-2">Dribble</a>
-              <a href="#" className="text-white/80 hover:text-white text-sm flex items-center gap-2">Pinterest</a>
-            </div>
-            <p className="text-center text-white/60 text-sm">
-              Copyright © 2018 - 2025 Creatype Studio. All Rights Reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
