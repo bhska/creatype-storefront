@@ -26,6 +26,12 @@ export default function CheckoutPage() {
   const [discount, setDiscount] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("paypal");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [orderCreated, setOrderCreated] = useState(false);
+  const [orderId, setOrderId] = useState<number | null>(null);
+  const [paymentInfo, setPaymentInfo] = useState<{
+    paymentUrl: string | null;
+    instructions: string;
+  } | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -106,9 +112,24 @@ export default function CheckoutPage() {
       };
 
       const result = await apiClient.createOrder(orderData);
-      toast.success("Order placed successfully!");
-      clearCart();
-      router.push(`/order-confirmation/${result.order.id}`);
+      const createdOrderId = result.order.id;
+      
+      toast.success("Order created successfully!");
+      setOrderId(createdOrderId);
+      setOrderCreated(true);
+
+      // Process payment
+      const paymentResult = await apiClient.processPayment(createdOrderId, paymentMethod);
+      setPaymentInfo({
+        paymentUrl: paymentResult.paymentUrl,
+        instructions: paymentResult.instructions
+      });
+
+      // If there's a payment URL, we'll show a button to redirect
+      // Otherwise, show instructions
+      if (!paymentResult.paymentUrl) {
+        toast.success("Order placed! Check your email for payment instructions.");
+      }
     } catch (error) {
       console.error("Error creating order:", error);
       toast.error("Failed to place order. Please try again.");
@@ -117,8 +138,122 @@ export default function CheckoutPage() {
     }
   };
 
+  const handlePaymentRedirect = () => {
+    if (paymentInfo?.paymentUrl) {
+      clearCart();
+      window.location.href = paymentInfo.paymentUrl;
+    }
+  };
+
+  const handleCompleteWithoutPayment = () => {
+    if (orderId) {
+      clearCart();
+      router.push(`/order-confirmation/${orderId}`);
+    }
+  };
+
   const subtotal = totalPrice;
   const finalTotal = subtotal - discount;
+
+  // Show payment modal after order is created
+  if (orderCreated && paymentInfo) {
+    return (
+      <div className="min-h-screen bg-[#0f1724]">
+        <Header />
+        <main className="container mx-auto px-4 py-12">
+          <div className="max-w-2xl mx-auto">
+            <Card className="bg-[#1a2b4d] border-white/10 p-8">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h1 className="text-white text-2xl font-bold mb-2">Order Created Successfully!</h1>
+                <p className="text-white/60">Order #{orderId}</p>
+              </div>
+
+              <div className="bg-[#0f1724] rounded-lg p-6 mb-6">
+                <h2 className="text-white font-semibold mb-3">Complete Your Payment</h2>
+                <p className="text-white/80 text-sm mb-4">{paymentInfo.instructions}</p>
+                
+                <div className="space-y-3">
+                  {paymentInfo.paymentUrl ? (
+                    <>
+                      <Button
+                        onClick={handlePaymentRedirect}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 text-lg"
+                      >
+                        {paymentMethod === "paypal" ? (
+                          <>
+                            <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 00-.794.68l-.04.22-.63 3.993-.028.14a.805.805 0 01-.794.68H7.72a.483.483 0 01-.477-.558L7.418 21h1.518l.95-6.02h1.385c4.678 0 7.75-2.203 8.796-6.502z"/>
+                              <path d="M2.379 0h8.625c1.45 0 2.654.313 3.519.934.86.617 1.395 1.538 1.573 2.782.088.605.09 1.25.007 1.93-.006.05-.013.098-.02.148v.38c.542 2.982-.47 5.024-3.042 6.15-.902.395-1.952.593-3.13.593H8.91a.805.805 0 00-.794.68l-.966 6.124a.643.643 0 01-.636.546H2.653a.483.483 0 01-.477-.558l2.7-17.117A.805.805 0 015.67 0h-3.29z"/>
+                            </svg>
+                            Continue to PayPal
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            Pay with Credit Card
+                          </>
+                        )}
+                      </Button>
+                      <p className="text-white/60 text-xs text-center">
+                        You will be redirected to complete your payment securely
+                      </p>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={handleCompleteWithoutPayment}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-6"
+                    >
+                      View Order Details
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-6">
+                <h3 className="text-white font-semibold mb-3">Order Summary</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between text-white/80">
+                    <span>Subtotal:</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-green-400">
+                      <span>Discount:</span>
+                      <span>-${discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-white font-bold text-base pt-2 border-t border-white/10">
+                    <span>Total:</span>
+                    <span>${finalTotal.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => {
+                    setOrderCreated(false);
+                    setPaymentInfo(null);
+                  }}
+                  className="text-white/60 hover:text-white text-sm"
+                >
+                  ← Go back to checkout
+                </button>
+              </div>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0f1724]">

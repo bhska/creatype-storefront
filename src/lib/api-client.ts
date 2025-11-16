@@ -171,6 +171,20 @@ class ApiClient {
   async getPaymentGateways(): Promise<PaymentGatewaysResponse> {
     return this.fetchJson<PaymentGatewaysResponse>("/api/payment-gateways");
   }
+
+  // Payment Processing
+  async processPayment(orderId: number, paymentMethod: string): Promise<{
+    success: boolean;
+    paymentUrl: string | null;
+    orderId: number;
+    paymentMethod: string;
+    instructions: string;
+  }> {
+    return this.fetchJson("/api/payment/process", {
+      method: "POST",
+      body: JSON.stringify({ orderId, paymentMethod }),
+    });
+  }
 }
 
 // Export singleton instance
