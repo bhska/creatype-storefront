@@ -110,7 +110,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-[#1a2b4d] to-[#0f1724] py-24 overflow-hidden">
+      <section className="relative bg-linear-to-b from-[#1a2b4d] to-[#0f1724] py-24 overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-6xl md:text-7xl font-light text-white mb-8 leading-tight">
@@ -162,7 +162,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {latestFonts.map((font, idx) => (
               <Card key={idx} className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                <div className="aspect-[4/3] overflow-hidden bg-white/5">
+                <div className="aspect-4/3 overflow-hidden bg-white/5">
                   <img src={font.image} alt={font.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-4">
@@ -194,7 +194,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {bestSellers.map((font, idx) => (
               <Card key={idx} className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                <div className="aspect-[4/3] overflow-hidden bg-white/5">
+                <div className="aspect-4/3 overflow-hidden bg-white/5">
                   <img src={font.image} alt={font.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-4">
@@ -226,7 +226,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {featuredFonts.map((font, idx) => (
               <Card key={idx} className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
-                <div className="aspect-[4/3] overflow-hidden bg-white/5">
+                <div className="aspect-4/3 overflow-hidden bg-white/5">
                   <img src={font.image} alt={font.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-4">
