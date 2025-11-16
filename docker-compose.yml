@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  creatype-storefront:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: creatype-storefront
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      # WooCommerce API Configuration
+      - NEXT_PUBLIC_WC_SITE_URL=${NEXT_PUBLIC_WC_SITE_URL:-https://your-site.com}
+      - WC_CONSUMER_KEY=${WC_CONSUMER_KEY:-ck_placeholder}
+      - WC_CONSUMER_SECRET=${WC_CONSUMER_SECRET:-cs_placeholder}
+    env_file:
+      - .env.production
+    networks:
+      - creatype-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  creatype-network:
+    driver: bridge

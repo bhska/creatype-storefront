@@ -1,0 +1,41 @@
+# Easypanel Configuration for Creatype Storefront
+# This file defines the deployment configuration for Easypanel
+
+name: creatype-storefront
+services:
+  - type: app
+    data:
+      projectName: creatype-storefront
+      serviceName: web
+      source:
+        type: github
+        repo: your-username/creatype-storefront
+        branch: main
+        autoDeploy: true
+      domains:
+        - host: creatype.yourdomain.com
+          port: 3000
+          https: true
+      env:
+        - key: NODE_ENV
+          value: production
+        - key: NEXT_TELEMETRY_DISABLED
+          value: "1"
+        - key: NEXT_PUBLIC_WC_SITE_URL
+          value: https://your-wordpress-site.com
+        - key: WC_CONSUMER_KEY
+          value: ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        - key: WC_CONSUMER_SECRET
+          value: cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      build:
+        type: dockerfile
+        dockerfilePath: /Dockerfile
+      deploy:
+        replicas: 1
+        command: []
+        restartPolicy: unless-stopped
+      mounts: []
+      ports:
+        - published: 3000
+          target: 3000
+          protocol: tcp
