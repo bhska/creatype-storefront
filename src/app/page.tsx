@@ -40,7 +40,6 @@ export default function Home() {
       // Fetch best sellers (featured products)
       const bestSellersResult = await apiClient.getProducts({
         per_page: 6,
-        featured: true,
         orderby: 'date',
         order: 'desc'
       });
@@ -178,7 +177,7 @@ export default function Home() {
               </div>
             ) : (
               latestFonts.map((product) => (
-                <ProductCard 
+                <ProductCard
                   key={product.id}
                   product={product}
                   onAddToCart={handleAddToCart}
@@ -209,7 +208,7 @@ export default function Home() {
               </div>
             ) : (
               bestSellers.map((product) => (
-                <ProductCard 
+                <ProductCard
                   key={product.id}
                   product={product}
                   onAddToCart={handleAddToCart}
@@ -240,7 +239,7 @@ export default function Home() {
               </div>
             ) : (
               featuredFonts.map((product) => (
-                <ProductCard 
+                <ProductCard
                   key={product.id}
                   product={product}
                   onAddToCart={handleAddToCart}
