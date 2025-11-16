@@ -7,7 +7,8 @@ import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { getProducts, type WCProduct } from "@/lib/woocommerce";
+import { apiClient } from "@/lib/api-client";
+import type { WCProduct } from "@/lib/woocommerce";
 import { useCart } from "@/lib/cart-context";
 import { toast } from "sonner";
 
@@ -36,7 +37,7 @@ export default function ShopPage() {
   async function fetchProducts() {
     setLoading(true);
     try {
-      const result = await getProducts({
+      const result = await apiClient.getProducts({
         page: currentPage,
         per_page: 12,
         category: selectedCategory !== "all" ? selectedCategory : undefined,

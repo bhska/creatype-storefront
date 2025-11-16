@@ -9,7 +9,8 @@ import { TypeTester } from "@/components/TypeTester";
 import { PricingSidebar } from "@/components/PricingSidebar";
 import { ProductCard } from "@/components/ProductCard";
 import { Badge } from "@/components/ui/badge";
-import { getProduct, getRelatedProducts, type WCProduct } from "@/lib/woocommerce";
+import { apiClient } from "@/lib/api-client";
+import type { WCProduct } from "@/lib/woocommerce";
 import { useCart } from "@/lib/cart-context";
 import { toast } from "sonner";
 import { Share2, Facebook, Twitter, Linkedin, Mail } from "lucide-react";
@@ -33,11 +34,10 @@ export default function ProductPage() {
   async function fetchProduct() {
     setLoading(true);
     try {
-      const productData = await getProduct(slug);
-      if (productData) {
-        setProduct(productData);
-        const related = await getRelatedProducts(productData.id);
-        setRelatedProducts(related);
+      const result = await apiClient.getProduct(slug, true);
+      if (result.product) {
+        setProduct(result.product);
+        setRelatedProducts(result.relatedProducts || []);
       }
     } catch (error) {
       console.error("Error fetching product:", error);

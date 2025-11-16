@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/lib/cart-context";
-import { createOrder } from "@/lib/woocommerce";
+import { apiClient } from "@/lib/api-client";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
 
@@ -45,14 +45,26 @@ export default function CheckoutPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const applyCoupon = () => {
-    // Simulated coupon validation
-    if (couponCode.toLowerCase() === "rockvilleversatility5") {
-      const discountAmount = totalPrice * 0.15; // 15% discount
-      setDiscount(discountAmount);
-      toast.success("Coupon applied successfully!");
-    } else {
+  const applyCoupon = async () => {
+    if (!couponCode) {
+      toast.error("Please enter a coupon code");
+      return;
+    }
+
+    try {
+      const result = await apiClient.validateCoupon(couponCode);
+      if (result.valid && result.coupon) {
+        const discountAmount = 
+          result.coupon.discount_type === "percent"
+            ? totalPrice * (Number.parseFloat(result.coupon.amount) / 100)
+            : Number.parseFloat(result.coupon.amount);
+        setDiscount(discountAmount);
+        toast.success("Coupon applied successfully!");
+      }
+    } catch (error) {
+      console.error("Error validating coupon:", error);
       toast.error("Invalid coupon code");
+      setDiscount(0);
     }
   };
 
@@ -93,10 +105,10 @@ export default function CheckoutPage() {
         payment_method_title: paymentMethod === "paypal" ? "PayPal" : "Credit Card",
       };
 
-      const order = await createOrder(orderData);
+      const result = await apiClient.createOrder(orderData);
       toast.success("Order placed successfully!");
       clearCart();
-      router.push(`/order-confirmation/${order.id}`);
+      router.push(`/order-confirmation/${result.order.id}`);
     } catch (error) {
       console.error("Error creating order:", error);
       toast.error("Failed to place order. Please try again.");
