@@ -20,6 +20,7 @@ export default function Home() {
   const [bestSellers, setBestSellers] = useState<WCProduct[]>([]);
   const [featuredFonts, setFeaturedFonts] = useState<WCProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function Home() {
 
   async function fetchHomeProducts() {
     setLoading(true);
+    setError(null);
     try {
       // Fetch latest products
       const latestResult = await apiClient.getProducts({
@@ -54,6 +56,7 @@ export default function Home() {
       setFeaturedFonts(featuredResult.products);
     } catch (error) {
       console.error("Error fetching home products:", error);
+      setError("Failed to load products. Please try again later.");
       toast.error("Failed to load products");
     } finally {
       setLoading(false);
@@ -92,7 +95,7 @@ export default function Home() {
 
   const blogPosts = [
     {
-      title: "10 Common Font License Types and How to Choose the Right One",
+      title: "10 Common Font License Types and How to Choose Right One",
       date: "November 12, 2025",
       excerpt: "Knowing font license types is crucial for anyone who uses typography in design or business...",
       image: "https://ext.same-assets.com/1839301121/933282807.jpeg"
@@ -100,7 +103,7 @@ export default function Home() {
     {
       title: "From Blurry to Sharp: Turning Low-Quality Shots Into Scroll-Stopping Posts",
       date: "November 11, 2025",
-      excerpt: "We've all been there: looking through the camera roll to locate a photo that captures the ideal mood...",
+      excerpt: "We've all been there: looking through camera roll to locate a photo that captures the ideal mood...",
       image: "https://ext.same-assets.com/1839301121/2811074827.webp"
     },
     {
@@ -175,6 +178,13 @@ export default function Home() {
               <div className="col-span-full flex justify-center items-center min-h-[400px]">
                 <div className="text-foreground">Loading products...</div>
               </div>
+            ) : error ? (
+              <div className="col-span-full flex flex-col justify-center items-center min-h-[400px] text-center">
+                <div className="text-destructive mb-4">{error}</div>
+                <Button onClick={fetchHomeProducts} variant="outline">
+                  Try Again
+                </Button>
+              </div>
             ) : (
               latestFonts.map((product) => (
                 <ProductCard
@@ -187,9 +197,9 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-primary hover:bg-primary/90 text-foreground">
+            <Link href="/shop" className="bg-primary hover:bg-primary/90 text-foreground">
               FIND MORE <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -206,6 +216,13 @@ export default function Home() {
               <div className="col-span-full flex justify-center items-center min-h-[400px]">
                 <div className="text-foreground">Loading products...</div>
               </div>
+            ) : error ? (
+              <div className="col-span-full flex flex-col justify-center items-center min-h-[400px] text-center">
+                <div className="text-destructive mb-4">{error}</div>
+                <Button onClick={fetchHomeProducts} variant="outline">
+                  Try Again
+                </Button>
+              </div>
             ) : (
               bestSellers.map((product) => (
                 <ProductCard
@@ -218,9 +235,9 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-primary hover:bg-primary/90 text-foreground">
+            <Link href="/shop" className="bg-primary hover:bg-primary/90 text-foreground">
               FIND MORE <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -237,6 +254,13 @@ export default function Home() {
               <div className="col-span-full flex justify-center items-center min-h-[400px]">
                 <div className="text-foreground">Loading products...</div>
               </div>
+            ) : error ? (
+              <div className="col-span-full flex flex-col justify-center items-center min-h-[400px] text-center">
+                <div className="text-destructive mb-4">{error}</div>
+                <Button onClick={fetchHomeProducts} variant="outline">
+                  Try Again
+                </Button>
+              </div>
             ) : (
               featuredFonts.map((product) => (
                 <ProductCard
@@ -249,9 +273,9 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <Button className="bg-primary hover:bg-primary/90 text-foreground">
+            <Link href="/shop" className="bg-primary hover:bg-primary/90 text-foreground">
               FIND MORE <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -359,7 +383,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {blogPosts.map((post, idx) => (
-              <Card key={idx} className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors">
+              <Card key={idx} className="bg-[#1a1f2e] border-white/10 overflow-hidden group hover:border-primary transition-colors py-0">
                 <div className="aspect-video overflow-hidden">
                   <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
                 </div>
